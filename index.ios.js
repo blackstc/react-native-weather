@@ -5,13 +5,18 @@ import React, {
   View
 } from 'react-native';
 
+import Api from './src/api';
+
 var Weather = React.createClass({
     getInitialState: function() {
         return {
             pin: {
                 latitude: 0,
                 longitude: 0
-            }
+            },
+            city: '',
+            tempurature: '',
+            description: '',
         }
     },
     render: function() {
@@ -28,6 +33,12 @@ var Weather = React.createClass({
                 longitude
             }
         });
+
+        Api(latitude, longitude)
+            .then((data) => {
+                console.log(data);
+                this.setState(data)
+            });
     }
 });
 

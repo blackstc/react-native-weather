@@ -1,11 +1,13 @@
-import React, {
-  AppRegistry,
-  MapView,
-  StyleSheet,
-  View
-} from 'react-native';
+var React = require('react-native');
+var {
+    AppRegistry,
+    MapView,
+    View,
+    Text,
+    StyleSheet
+} = React;
 
-import Api from './src/api';
+var Api = require('./src/api');
 
 var Weather = React.createClass({
     getInitialState: function() {
@@ -16,35 +18,58 @@ var Weather = React.createClass({
             },
             city: '',
             tempurature: '',
-            description: '',
-        }
+            description: ''
+        };
     },
     render: function() {
-        return <MapView
-            annotations={[this.state.pin]}
-            onRegionChangeComplete={this.onRegionChangeComplete}
-            style={styles.map}>
-        </MapView>
+        return <View style={styles.container}>
+            <MapView
+                annotations={[this.state.pin]}
+                onRegionChangeComplete={this.onRegionChangeComplete}
+                style={styles.map}>
+            </MapView>
+            <View style={styles.textWrapper}>
+                <Text style={styles.text}>{this.state.city}</Text>
+                <Text style={styles.text}>{this.state.tempurature}</Text>
+                <Text style={styles.text}>{this.state.description}</Text>
+            </View>
+        </View>
     },
-    onRegionChangeComplete: function({ latitude, longitude }) {
+    onRegionChangeComplete: function(region) {
         this.setState({
             pin: {
-                latitude,
-                longitude
+                longitude: region.longitude,
+                latitude: region.latitude
             }
         });
 
-        Api(latitude, longitude)
-            .then((data) => {
-                console.log(data);
-                this.setState(data)
-            });
+        Api(region.latitude, region.longitude)
+        .then((data) => {
+            this.setState(data);
+            console.log(this.state);
+        });
     }
 });
 
 var styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'stretch',
+        backgroundColor: '#F5FCFF'
+    },
     map: {
-        flex: 1
+        flex: 2,
+        marginTop: 30
+    },
+    textWrapper: {
+        flex: 1,
+        alignItems: 'center',
+        margin: 10
+    },
+    text: {
+        fontSize: 30,
+        margin: 10
     }
 });
 
